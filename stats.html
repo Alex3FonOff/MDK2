@@ -13,12 +13,12 @@
     <h1>Статистика бюджета</h1>
 
     <div class="container">
-      <!-- График: Расходы по категориям -->
+
       <div class="chart-section">
         <canvas id="categoryChart"></canvas>
       </div>
 
-      <!-- График: Баланс по датам -->
+
       <div class="chart-section">
         <canvas id="balanceChart"></canvas>
       </div>
@@ -29,18 +29,17 @@
     </p>
 
     <script>
-      // Получаем транзакции из localStorage
+
       let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
 
-      // Фильтруем только расходы (с отрицательными суммами)
+
       const expenseTransactions = transactions.filter(t => t.amount < 0);
-      // Фильтруем только доходы (с положительными суммами)
+
       const incomeTransactions = transactions.filter(t => t.amount > 0);
 
-      // Сгруппируем расходы по категориям
       const categorySums = expenseTransactions.reduce((acc, transaction) => {
         const category = transaction.category;
-        const amount = Math.abs(transaction.amount); // Используем абсолютное значение, так как это расход
+        const amount = Math.abs(transaction.amount); 
         if (acc[category]) {
           acc[category] += amount;
         } else {
@@ -49,25 +48,25 @@
         return acc;
       }, {});
 
-      // Массивы для данных графика по категориям
+
       const categories = Object.keys(categorySums); // Массив с категориями
       const amounts = Object.values(categorySums);   // Массив с суммами расходов по категориям
 
-      // Данные для графика баланса по датам
+
       const dates = [];
       const balances = [];
       let cumulativeBalance = 0;
 
-      // Объединяем все транзакции (доходы и расходы) и сортируем по дате
+
       const allTransactions = [...incomeTransactions, ...expenseTransactions];
       allTransactions.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-      // Обновляем график баланса
+
       allTransactions.forEach(transaction => {
         const date = transaction.date;
         const amount = transaction.amount;
 
-        // Добавляем данные для графика баланса
+
         if (!dates.includes(date)) {
           dates.push(date);
         }
@@ -75,17 +74,17 @@
         balances.push(cumulativeBalance);
       });
 
-      // График: Расходы по категориям
+
       const ctxCategory = document.getElementById('categoryChart').getContext('2d');
       const categoryChart = new Chart(ctxCategory, {
-        type: 'bar', // Столбчатая диаграмма
+        type: 'bar',
         data: {
-          labels: categories, // Категории на оси X
+          labels: categories, 
           datasets: [{
             label: 'Расходы по категориям',
-            data: amounts, // Сумма расходов на оси Y
-            backgroundColor: 'rgba(75, 192, 192, 0.5)', // Цвет столбцов
-            borderColor: 'rgba(75, 192, 192, 1)',     // Цвет границы столбцов
+            data: amounts,
+            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+            borderColor: 'rgba(75, 192, 192, 1)',   
             borderWidth: 1
           }]
         },
@@ -109,18 +108,18 @@
         }
       });
 
-      // График: Баланс по датам
+
       const ctxBalance = document.getElementById('balanceChart').getContext('2d');
       const balanceChart = new Chart(ctxBalance, {
-        type: 'line', // Линейная диаграмма
+        type: 'line', 
         data: {
-          labels: dates, // Даты на оси X
+          labels: dates, 
           datasets: [{
             label: 'Баланс',
-            data: balances, // Баланс на оси Y
-            borderColor: 'rgba(255, 99, 132, 1)', // Цвет линии
+            data: balances,
+            borderColor: 'rgba(255, 99, 132, 1)',
             backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            fill: true, // Заполнение графика
+            fill: true, 
             tension: 0.4
           }]
         },
