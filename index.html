@@ -29,10 +29,10 @@
       </select>
 
       <select id="category">
-        <!-- Категории будут меняться в зависимости от выбранного типа -->
+      
       </select>
 
-      <!-- Поле для выбора даты -->
+ 
       <input type="date" id="date" required />
 
       <button type="submit">Добавить</button>
@@ -42,7 +42,7 @@
     <ul id="transaction-list"></ul>
 
     <script>
-      // Автоматическое заполнение поля с датой текущей датой
+
       document.addEventListener('DOMContentLoaded', () => {
         const dateInput = document.getElementById('date');
         const today = new Date();
@@ -80,7 +80,6 @@
         }
       }
 
-      // Инициализация
       updateCategories();
       
       typeSelect.addEventListener('change', updateCategories);
@@ -133,7 +132,7 @@
 
       form.addEventListener('submit', addTransaction);
 
-      // Инициализация
+    
       updateBalance();
       renderTransactions();
     </script>
