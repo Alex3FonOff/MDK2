@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Калькулятор бюджета</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  
+  <body>
+
+    <h1>Калькулятор бюджета</h1>
+  
+    <p style="text-align:center; margin-bottom: 20px;">
+      <a href="stats.html" style="text-decoration: none; background: #333; color: white; padding: 10px 20px; border-radius: 6px;">📊 Посмотреть статистику</a>
+    </p>
+
+    <div class="balance">
+      Баланс: <span id="balance">0 ₽</span>
+    </div>
+
+    <form id="transaction-form">
+      <input type="text" id="description" placeholder="Описание" required />
+      <input type="number" id="amount" placeholder="Сумма (например: -500 или 1200)" required />
+      
+      <select id="type">
+        <option value="income">Доход</option>
+        <option value="expense">Расход</option>
+      </select>
+
+      <select id="category">
+        <!-- Категории будут меняться в зависимости от выбранного типа -->
+      </select>
+
+      <!-- Поле для выбора даты -->
+      <input type="date" id="date" required />
+
+      <button type="submit">Добавить</button>
+    </form>
+
+    <h2>Операции</h2>
+    <ul id="transaction-list"></ul>
+
+    <script>
+      // Автоматическое заполнение поля с датой текущей датой
+      document.addEventListener('DOMContentLoaded', () => {
+        const dateInput = document.getElementById('date');
+        const today = new Date();
+        const formattedDate = today.toISOString().split('T')[0];
+        dateInput.value = formattedDate;
+      });
+
+      const form = document.getElementById('transaction-form');
+      const list = document.getElementById('transaction-list');
+      const balanceEl = document.getElementById('balance');
+
+      let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+      const typeSelect = document.getElementById('type');
+      const categorySelect = document.getElementById('category');
+
+      function updateCategories() {
+        categorySelect.innerHTML = '';
+        if (typeSelect.value === 'income') {
+          const incomeCategories = ['Зарплата', 'Другое'];
+          incomeCategories.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat;
+            option.textContent = cat;
+            categorySelect.appendChild(option);
+          });
+        } else if (typeSelect.value === 'expense') {
+          const expenseCategories = ['Еда', 'Транспорт', 'Развлечения', 'Покупки', 'Другое'];
+          expenseCategories.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat;
+            option.textContent = cat;
+            categorySelect.appendChild(option);
+          });
+        }
+      }
+
+      // Инициализация
+      updateCategories();
+      
+      typeSelect.addEventListener('change', updateCategories);
+
+      function updateBalance() {
+        const balance = transactions.reduce((sum, t) => sum + t.amount, 0);
+        balanceEl.textContent = `${balance.toLocaleString()} ₽`;
+      }
+
+      function renderTransactions() {
+        list.innerHTML = '';
+        transactions.forEach((t, index) => {
+          const li = document.createElement('li');
+          li.classList.add(t.amount >= 0 ? 'income' : 'expense');
+          li.innerHTML = `
+            <strong>${t.description}</strong><br>
+            <small>Категория: ${t.category || '—'}</small><br>
+            <small>Дата: ${t.date || '—'}</small><br>
+            <span>${t.amount >= 0 ? '+' : ''}${t.amount} ₽</span>
+            <button onclick="removeTransaction(${index})" style="float:right;">×</button>
+          `;
+          list.appendChild(li);
+        });
+      }
+
+      function addTransaction(e) {
+        e.preventDefault();
+        const desc = document.getElementById('description').value;
+        const amountInput = +document.getElementById('amount').value;
+        const type = document.getElementById('type').value;
+        const category = document.getElementById('category').value;
+        const date = document.getElementById('date').value;
+
+        const amount = type === 'expense' ? -Math.abs(amountInput) : Math.abs(amountInput);
+
+        transactions.push({ description: desc, amount, category, date });
+
+        localStorage.setItem('transactions', JSON.stringify(transactions));
+        form.reset();
+        updateBalance();
+        renderTransactions();
+      }
+
+      function removeTransaction(index) {
+        transactions.splice(index, 1);
+        localStorage.setItem('transactions', JSON.stringify(transactions));
+        updateBalance();
+        renderTransactions();
+      }
+
+      form.addEventListener('submit', addTransaction);
+
+      // Инициализация
+      updateBalance();
+      renderTransactions();
+    </script>
+  </body>
+</html>

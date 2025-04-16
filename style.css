@@ -1,0 +1,74 @@
+body {
+    font-family: sans-serif;
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+  }
+  h1, h2 {
+    text-align: center;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 30px;
+  }
+  input, select, button {
+    padding: 10px;
+    font-size: 1rem;
+  }
+  .balance {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  li {
+    background: white;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-left: 5px solid;
+  }
+  .income {
+    border-color: green;
+  }
+  .expense {
+    border-color: red;
+  }
+  button {
+    cursor: pointer;
+  }
+    /* Основной контейнер с flexbox */
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 20px;
+      }
+      /* Секция с графиками */
+      .chart-section {
+        flex: 1 1 100%; /* Это будет занимать всю ширину на маленьких экранах */
+        max-width: 100%; /* Ограничиваем ширину на больших экранах */
+        height: 400px; /* Фиксированная высота для графика */
+      }
+      canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      /* Адаптивность: если экран меньше 600px, сделаем текст и график на весь экран */
+      @media (max-width: 600px) {
+        .container {
+          flex-direction: column;
+          align-items: center;
+        }
+        .chart-section {
+          max-width: 100%;
+        }
+      }
